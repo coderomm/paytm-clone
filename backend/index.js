@@ -1,18 +1,24 @@
 const express = require("express");
-const cors = require('cors');
-const PORT = 3000;
+const cors = require("cors");
+const helmet = require("helmet");
 const app = express();
-// require database connection 
+const PORT = process.env.PORT || 3000;
 const dbConnect = require("./db/dbConnect");
+const mainRouter = require("./routes/index");
 
-// execute database connection 
 app.use(cors());
+app.use(helmet());
+app.use(cookieParser());
 app.use(express.json());
 dbConnect();
 
-const mainRouter = require('./routes/index')
-
 app.use('/api/v1', mainRouter);
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ message: "Internal Server Error", error: err.message });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 }).on('error', (e) => {

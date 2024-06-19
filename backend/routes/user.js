@@ -1,24 +1,22 @@
-// backend/routes/user.js
+// routes/user.js
 const express = require('express');
-
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../db/userModel');
+const Account = require('../db/accountModel');
+const zod = require('zod');
 const router = express.Router();
-const zod = require("zod");
-const User = require("../db/userModel");
-const Account = require("../db/accountModel");
-const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config");
-const { authMiddleware } = require("../middleware");
-const bcrypt = require("bcrypt");
+const {authMiddleware}= require('../middleware')
 
-const signupBody = zod.object({
+const signupSchema = zod.object({
     username: zod.string().email(),
-    firstName: zod.string(),
-    lastName: zod.string(),
-    password: zod.string()
+    firstName: zod.string().min(1),
+    lastName: zod.string().min(1),
+    password: zod.string().min(6)
 });
 
 router.post("/signup", async (req, res) => {
-    const { success, error } = signupBody.safeParse(req.body);
+    const { success, error } = signupSchema.safeParse(req.body);
     if (!success) {
         return res.status(400).json({
             message: "Validation failed",
@@ -49,7 +47,13 @@ router.post("/signup", async (req, res) => {
             balance: 1 + Math.random() * 10000
         });
 
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Lax',
+            maxAge: 3600000
+        });
         res.status(201).json({
             message: "User created successfully",
             token
@@ -62,40 +66,54 @@ router.post("/signup", async (req, res) => {
     }
 });
 
-const signinBody = zod.object({
+const signinSchema = zod.object({
     username: zod.string().email(),
-    password: zod.string()
+    password: zod.string().min(6)
 })
 
 router.post("/signin", async (req, res) => {
-    const { success } = signinBody.safeParse(req.body)
+    const { success, error } = signinSchema.safeParse(req.body);
     if (!success) {
-        return res.status(411).json({
-            message: "Email already taken / Incorrect inputs"
-        })
+        return res.status(400).json({
+            message: "Validation failed",
+            errors: error.issues
+        });
     }
 
-    const user = await User.findOne({
-        username: req.body.username,
-        password: req.body.password
-    });
+    try {
+        const user = await User.findOne({
+            username: req.body.username
+        });
+        if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
 
-    if (user) {
         const token = jwt.sign({
             userId: user._id
-        }, JWT_SECRET);
+        }, process.env.JWT_SECRET, {
+            expiresIn: '1h'
+        });
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Lax',
+            maxAge: 3600000
+        });
 
         res.status(200).json({
             message: "Signin successful",
             token: token
         })
-        return;
+    } catch (error) {
+        return res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
     }
-
-    res.status(411).json({
-        message: "Error while logging in"
-    })
-})
+});
 
 const updateBody = zod.object({
     password: zod.string().optional(),
