@@ -1,41 +1,36 @@
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-} from "react-router-dom";
-import { Signup } from "./pages/Signup";
-import { Signin } from "./pages/Signin";
-import { Dashboard } from "./pages/Dashboard";
-import { SendMoney } from "./pages/SendMoney";
-import SplashScreen from "./components/SplashScreen";
-import { useEffect, useState } from "react";
+// src/App.jsx
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./components/AuthProvider";
+import Signin from "./pages/Signin";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import UpdateAccount from "./pages/UpdateAccount";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-function App() {
-  const [showSplash, setShowSplash] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 4000);
-    return () => clearTimeout(timer);
-  }, [])
-
+const App = () => {
   return (
-    <>
-      {showSplash ? (
-        <SplashScreen />
-      ) : (
-        <BrowserRouter>
-          <Routes>
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/signin" element={<Signin />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/send" element={<SendMoney />} />
-          </Routes>
-        </BrowserRouter>
-      )}
-    </>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/signin" element={<RedirectIfAuthenticated><Signin /></RedirectIfAuthenticated>} />
+          <Route path="/signup" element={<RedirectIfAuthenticated><Signup /></RedirectIfAuthenticated>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/update-account" element={<ProtectedRoute><UpdateAccount /></ProtectedRoute>} />
+          <Route path="/" element={<Navigate to="/dashboard" />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
-}
+};
 
-export default App
+const RedirectIfAuthenticated = ({ children }) => {
+  const { user } = useAuth();
+
+  if (user) {
+    return <Navigate to="/dashboard" />;
+  }
+
+  return children;
+};
+
+export default App;

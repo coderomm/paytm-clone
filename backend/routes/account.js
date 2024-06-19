@@ -21,9 +21,7 @@ router.get("/balance", authMiddleware, async (req, res) => {
         const account = await Account.findOne({ userId: req.userId });
 
         if (!account) {
-            return res.status(404).json({
-                message: "Account not found"
-            });
+            return res.status(404).json({ message: "Account not found" });
         }
 
         // Validate account data using Zod schema
@@ -48,7 +46,6 @@ router.get("/balance", authMiddleware, async (req, res) => {
 
 router.post("/transfer", authMiddleware, async (req, res) => {
     const session = await mongoose.startSession();
-
     try {
         const validation = transferSchema.safeParse(req.body);
         if (!validation.success) {

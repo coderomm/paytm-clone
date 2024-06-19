@@ -6,7 +6,7 @@ const User = require('../db/userModel');
 const Account = require('../db/accountModel');
 const zod = require('zod');
 const router = express.Router();
-const {authMiddleware}= require('../middleware')
+const { authMiddleware } = require('../middleware')
 
 const signupSchema = zod.object({
     username: zod.string().email(),
@@ -115,28 +115,55 @@ router.post("/signin", async (req, res) => {
     }
 });
 
-const updateBody = zod.object({
+const updateSchema = zod.object({
     password: zod.string().optional(),
     firstName: zod.string().optional(),
     lastName: zod.string().optional(),
-})
+});
 
 router.put("/", authMiddleware, async (req, res) => {
-    const { success } = updateBody.safeParse(req.body)
+    const { success, error } = updateSchema.safeParse(req.body);
     if (!success) {
-        res.status(411).json({
-            message: "Error while updating information"
-        })
+        return res.status(400).json({
+            message: "Validation failed",
+            errors: error.issues
+        });
     }
 
-    await User.updateOne(req.body, {
-        id: req.userId
-    })
+    const updateData = { ...req.body };
 
-    res.json({
-        message: "Updated successfully"
-    })
-})
+    // If password is being updated, hash it
+    if (updateData.password) {
+        updateData.password = await bcrypt.hash(updateData.password, 10);
+    }
+
+    try {
+        await User.updateOne({ _id: req.userId }, updateData);
+        res.json({
+            message: "Updated successfully"
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error updating user",
+            error: error.message
+        });
+    }
+});
+
+router.get("/me", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching user information",
+            error: error.message
+        });
+    }
+});
 
 router.get("/bulk", async (req, res) => {
     const filter = req.query.filter || "";
