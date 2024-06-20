@@ -1,4 +1,4 @@
-// src/contexts/AuthContext.js
+// src/contexts/    .jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "../components/AxiosInstance";
 
@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
         const checkAuth = async () => {
             try {
                 const response = await axios.get("/user/me");
+                console.log('res', response)
                 setUser(response.data);
             } catch (error) {
                 setUser(null);

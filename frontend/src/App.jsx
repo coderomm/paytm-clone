@@ -30,6 +30,7 @@ const RedirectIfAuthenticated = ({ children }) => {
   const { user } = useAuth();
 
   if (user) {
+    console.log('user: ',user)
     return <Navigate to="/dashboard" />;
   }
 
