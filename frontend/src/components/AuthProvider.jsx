@@ -1,43 +1,3 @@
-// // src/components/AuthProvider.jsx
-// import React, { createContext, useContext, useEffect, useState } from 'react';
-// import { useNavigate, useLocation } from 'react-router-dom';
-// import Cookies from 'js-cookie';
-
-// const AuthContext = createContext();
-
-// export const useAuth = () => useContext(AuthContext);
-
-// const AuthProvider = ({ children }) => {
-//   const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get('token'));
-//   const navigate = useNavigate();
-//   const location = useLocation();
-
-//   useEffect(() => {
-//     if (isAuthenticated && (location.pathname === '/signin' || location.pathname === '/signup')) {
-//       navigate('/dashboard');
-//     }
-//   }, [isAuthenticated, location.pathname, navigate]);
-
-//   const login = (token) => {
-//     Cookies.set('token', token, { expires: 1 }); // Token expires in 1 day
-//     setIsAuthenticated(true);
-//   };
-
-//   const logout = () => {
-//     Cookies.remove('token');
-//     setIsAuthenticated(false);
-//     navigate('/signin');
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
-
-// export default AuthProvider;
-
 // src/contexts/AuthContext.js
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "../components/AxiosInstance";
@@ -45,7 +5,7 @@ import axios from "../components/AxiosInstance";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -59,10 +19,9 @@ export const AuthProvider = ({ children }) => {
         checkAuth();
     }, []);
 
-    const login = async (credentials) => {
-        const response = await axios.post("/user/signin", credentials);
+    const login = async (username, password) => {
+        const response = await axios.post("http://localhost:3000/api/v1/user/signin", { username, password });
         setUser(response.data.user);
-        return response.data;
     };
 
     const logout = () => {

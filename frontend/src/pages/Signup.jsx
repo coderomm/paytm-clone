@@ -20,16 +20,15 @@ const Signup = () => {
   const { login } = useAuth();
 
   const handleSubmit = async () => {
-    console.log('enter')
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/user/signup', {
+      await axios.post('http://localhost:3000/api/v1/user/signup', {
         username,
         firstName,
         lastName,
         password
       });
-      console.log('res ',response)
-      login(response.data.token);
+      console.log('states: ', username, password)
+      await login(username, password);
       navigate('/dashboard');
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred');
@@ -42,10 +41,10 @@ const Signup = () => {
         <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
           <Heading label="Sign up" />
           <SubHeading label="Create an account to get started" />
-          <InputBox onChange={e => { setFirstName(e.target.value); }} placeholder="John" label={"First Name"} />
-          <InputBox onChange={(e) => { setLastName(e.target.value); }} placeholder="Doe" label={"Last Name"} />
-          <InputBox onChange={e => { setUsername(e.target.value); }} placeholder="om@gmail.com" label={"Email"} />
-          <InputBox onChange={(e) => { setPassword(e.target.value) }} placeholder="123456" label={"Password"} />
+          <InputBox onChange={e => { setFirstName(e.target.value); }} placeholder={"om"} label={"First Name"} />
+          <InputBox onChange={(e) => { setLastName(e.target.value); }} placeholder={"sharma"} label={"Last Name"} />
+          <InputBox onChange={e => { setUsername(e.target.value); }} placeholder={"om@gmail.com"} label={"Email"} />
+          <InputBox onChange={(e) => { setPassword(e.target.value) }} placeholder={"123456"} label={"Password"} />
           {error && <div className="text-red-500">{error}</div>}
           <div className="pt-4">
             <Button label="Sign up" onClick={handleSubmit} />
