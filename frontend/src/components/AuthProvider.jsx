@@ -5,7 +5,7 @@ import axios from "../components/AxiosInstance";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -23,11 +23,16 @@ export const AuthProvider = ({ children }) => {
     const login = async (username, password) => {
         const response = await axios.post("http://localhost:3000/api/v1/user/signin", { username, password });
         setUser(response.data.user);
+        return;
     };
 
-    const logout = () => {
-        setUser(null);
-        // Optionally, clear cookies here
+    const logout = async () => {
+        try {
+            await axios.post("http://localhost:3000/api/v1/user/logout");
+            setUser(null);
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
     };
 
     return (

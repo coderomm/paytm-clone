@@ -23,17 +23,15 @@ const App = () => {
 
 const AuthRoute = ({ children }) => {
   const { user } = useAuth();
+  console.log('user: ', user)
   return user ? children : <Navigate to="/signin" />;
 };
 
 const RedirectIfAuthenticated = ({ children }) => {
   const { user } = useAuth();
-
   if (user) {
-    console.log('user: ',user)
     return <Navigate to="/dashboard" />;
   }
-
   return children;
 };
 

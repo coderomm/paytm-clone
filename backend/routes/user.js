@@ -190,4 +190,22 @@ router.get("/bulk", async (req, res) => {
     })
 })
 
+router.post("/logout", authMiddleware, (req, res) => {
+    try {
+        res.cookie('token', '', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Lax',
+            maxAge: 0
+        });
+        res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
+    }
+});
+
+
 module.exports = router;
