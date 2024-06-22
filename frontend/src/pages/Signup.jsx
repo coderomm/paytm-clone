@@ -15,23 +15,27 @@ const Signup = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async () => {
     try {
-      await axios.post('http://localhost:3000/api/v1/user/signup', {
+      const response = await axios.post('http://localhost:3000/api/v1/user/signup', {
         username,
         firstName,
         lastName,
         password
       });
+      setSuccess(response.message);
+      setError(null)
       console.log('states: ', username, password)
       await login(username, password);
       navigate('/dashboard');
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred');
+      setSuccess(null)
     }
   };
 
@@ -45,6 +49,7 @@ const Signup = () => {
           <InputBox onChange={(e) => { setLastName(e.target.value); }} placeholder={"sharma"} label={"Last Name"} />
           <InputBox onChange={e => { setUsername(e.target.value); }} placeholder={"om@gmail.com"} label={"Email"} />
           <InputBox onChange={(e) => { setPassword(e.target.value) }} placeholder={"123456"} label={"Password"} />
+          {success && <div className="text-green-500">{success}</div>}
           {error && <div className="text-red-500">{error}</div>}
           <div className="pt-4">
             <Button label="Sign up" onClick={handleSubmit} />

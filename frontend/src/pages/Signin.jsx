@@ -1,8 +1,7 @@
 // src/pages/Signin.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../components/AuthProvider';
 import { BottomWarning } from '../components/BottomWarning';
 import { Button } from '../components/Button';
 import { Heading } from '../components/Heading';
@@ -12,16 +11,18 @@ import { SubHeading } from '../components/SubHeading';
 const Signin = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [success, setSuccess] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const { login } = useAuth();
 
     const handleSubmit = async () => {
         try {
-            await axios.post('http://localhost:3000/api/v1/user/signin', { username, password });
-            await login(username, password);
+            const response = await axios.post('http://localhost:3000/api/v1/user/signin', { username, password });
+            setSuccess(response.message);
+            setError(null);
             navigate('/dashboard');
         } catch (error) {
+            setSuccess(null);
             setError(error.response?.data?.message || 'An error occurred');
         }
     };
@@ -35,6 +36,7 @@ const Signin = () => {
                     <InputBox onChange={e => { setUsername(e.target.value); }} placeholder="om@gmail.com" label={"Email"} />
                     <InputBox onChange={(e) => { setPassword(e.target.value) }} placeholder="123456" label={"Password"} />
 
+                    {success && <div className="text-green-500">{success}</div>}
                     {error && <div className="text-red-500">{error}</div>}
                     <div className="pt-4">
                         <Button label="Sign in" onClick={handleSubmit} />
