@@ -1,6 +1,6 @@
 // src/pages/SendMoney.jsx
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from "../components/AxiosInstance";
 import { useState } from 'react';
 import Cookies from 'js-cookie';
 
