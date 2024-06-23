@@ -1,7 +1,7 @@
 // src/pages/Signup.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from "../components/AxiosInstance";
 import { useAuth } from '../components/AuthProvider';
 import { BottomWarning } from '../components/BottomWarning';
 import { Button } from '../components/Button';
@@ -17,22 +17,22 @@ const Signup = () => {
 
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/user/signup', {
-        username,
-        firstName,
-        lastName,
-        password
+      const signupResponse = await axios.post('/user/signup', {
+        username, firstName, lastName, password
       });
-      setSuccess(response.message);
+      setSuccess(signupResponse.message);
       setError(null)
-      console.log('states: ', username, password)
-      await login(username, password);
-      navigate('/dashboard');
+      const loginResponse = await login(username, password);
+      if (loginResponse) {
+        navigate('/dashboard');
+      } else {
+        throw new Error('Login failed after signup')
+      }
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred');
       setSuccess(null)

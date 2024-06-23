@@ -17,7 +17,7 @@ const SendMoney = () => {
         const token = Cookies.get('token');
         try {
             await axios.post(
-                'http://localhost:3000/api/v1/account/transfer',
+                '/api/v1/account/transfer',
                 {
                     to: id,
                     amount

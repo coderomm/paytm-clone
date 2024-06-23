@@ -1,7 +1,7 @@
 // src/pages/Signin.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../components/AxiosInstance';
 import { BottomWarning } from '../components/BottomWarning';
 import { Button } from '../components/Button';
 import { Heading } from '../components/Heading';
@@ -17,10 +17,14 @@ const Signin = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/user/signin', { username, password });
-            setSuccess(response.message);
-            setError(null);
-            navigate('/dashboard');
+            const response = await axios.post('/user/signin', { username, password });
+            if (response) {
+                setSuccess(response.message);
+                setError(null);
+                navigate('/dashboard');
+            } else {
+                throw new Error('Login failed')
+            }
         } catch (error) {
             setSuccess(null);
             setError(error.response?.data?.message || 'An error occurred');

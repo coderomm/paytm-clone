@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "../components/Button";
 import { Heading } from "../components/Heading";
 import { InputBox } from "../components/InputBox";
@@ -10,21 +10,6 @@ const UpdateAccount = () => {
     const [lastName, setLastName] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get("/user/me");
-                const { firstName, lastName } = response.data;
-                setFirstName(firstName);
-                setLastName(lastName);
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            }
-        };
-
-        fetchUserData();
-    }, []);
 
     const handleUpdate = async () => {
         try {
