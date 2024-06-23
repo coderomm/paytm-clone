@@ -1,7 +1,7 @@
 // src/pages/Signup.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from "../components/AxiosInstance";
 import { useAuth } from '../components/AuthProvider';
 import { BottomWarning } from '../components/BottomWarning';
 import { Button } from '../components/Button';
