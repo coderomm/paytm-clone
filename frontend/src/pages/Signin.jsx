@@ -1,11 +1,7 @@
 // src/pages/Signin.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
 import axios from '../components/AxiosInstance';
-=======
-import axios from "../components/AxiosInstance";
->>>>>>> 8db593800610c7d140596254c199d37963d161af
 import { BottomWarning } from '../components/BottomWarning';
 import { Button } from '../components/Button';
 import { Heading } from '../components/Heading';
