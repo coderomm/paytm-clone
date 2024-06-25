@@ -12,11 +12,11 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="/signin" element={<RedirectIfAuthenticated><Signin /></RedirectIfAuthenticated>} />
           <Route path="/signup" element={<RedirectIfAuthenticated><Signup /></RedirectIfAuthenticated>} />
           {/* <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} /> */}
           <Route path="/update-account" element={<ProtectedRoute><UpdateAccount /></ProtectedRoute>} />
-          {/* <Route path="/" element={<Navigate to="/dashboard" />} /> */}
           <Route path="/dashboard" element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
