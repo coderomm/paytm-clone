@@ -22,6 +22,7 @@ const Signin = () => {
                 setSuccess(response.message);
                 setError(null);
                 navigate('/dashboard');
+                console.log('navigate/dashboard called')
             } else {
                 throw new Error('Login failed')
             }
