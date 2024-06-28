@@ -5,15 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 
 export const Users = () => {
-    // Replace with backend call
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState("");
 
     useEffect(() => {
-        axios.get("/user/bulk?filter=" + filter)
-            .then(response => {
-                setUsers(response.data.user)
-            })
+        const response = axios.get("/user/bulk?filter=" + filter)
+        if (response.user) setUsers(response.user);
     }, [filter])
 
     return <>

@@ -1,44 +1,60 @@
 // src/components/Authprovider.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "../components/AxiosInstance";
-import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
 
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get("/user/me");
-                setUser(response.data);
+                const response = await axios.get("/user/me", { withCredentials: true });
+                if (response.data.user) setCurrentUser(response.data.user);
             } catch (error) {
-                setUser(null);
-                console.error("Auth check failed: ", error);
+                setCurrentUser(null);
+                console.error('Not logged in', error);
             }
         };
         checkAuth();
     }, []);
 
+    const signup = async (username, firstName, lastName, password) => {
+        try {
+            const response = await axios.post('/user/signup', { username, firstName, lastName, password }, { withCredentials: true });
+            console.log('signup response: ', response)
+            if (response.data.user) setCurrentUser(response.data.user);
+            return response.data;
+        } catch (error) {
+            console.error('Signin failed: ', error)
+            throw error;
+        }
+    }
+
     const login = async (username, password) => {
-        const response = await axios.post("/user/signin", { username, password });
-        setUser(response.data.user);
-        Cookies.set('token', response.data.token, { expires: 1 });
-        return response.data;
+        try {
+            const response = await axios.post("/user/signin", { username, password }, { withCredentials: true });
+            console.log('login response: ', response)
+            if (response.data.user) setCurrentUser(response.data.user);
+            return response.data;
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
     };
 
     const logout = async () => {
         try {
-            await axios.post("/user/logout");
-            setUser(null);
+            const response = await axios.post('/user/logout', {}, { withCredentials: true });
+            setCurrentUser(null);
+            return response.data;
         } catch (error) {
             console.error("Logout failed:", error);
         }
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ currentUser, signup, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,34 +1,30 @@
 // src/pages/Signin.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../components/AxiosInstance';
 import { BottomWarning } from '../components/BottomWarning';
 import { Button } from '../components/Button';
 import { Heading } from '../components/Heading';
 import { InputBox } from '../components/InputBox';
 import { SubHeading } from '../components/SubHeading';
+import { useAuth } from '../components/AuthProvider';
 
 const Signin = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [success, setSuccess] = useState(null);
-    const [error, setError] = useState(null);
+    const { login } = useAuth();
     const navigate = useNavigate();
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            const response = await axios.post('/user/signin', { username, password });
-            if (response) {
-                setSuccess(response.message);
-                setError(null);
+            const response = await login(username, password);
+            if (response.user) {
                 navigate('/dashboard');
-                console.log('navigate/dashboard called')
             } else {
-                throw new Error('Login failed')
+                console.error('Signin failed:', response);
             }
         } catch (error) {
-            setSuccess(null);
-            setError(error.response?.data?.message || 'An error occurred');
+            console.error('Signin failed:', error);
         }
     };
 
@@ -40,9 +36,6 @@ const Signin = () => {
                     <SubHeading label="Enter your credentials to access your account" />
                     <InputBox onChange={e => { setUsername(e.target.value); }} placeholder="om@gmail.com" label={"Email"} />
                     <InputBox onChange={(e) => { setPassword(e.target.value) }} placeholder="123456" label={"Password"} />
-
-                    {success && <div className="text-green-500">{success}</div>}
-                    {error && <div className="text-red-500">{error}</div>}
                     <div className="pt-4">
                         <Button label="Sign in" onClick={handleSubmit} />
                     </div>
