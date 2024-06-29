@@ -25,7 +25,10 @@ export const AuthProvider = ({ children }) => {
             const response = await axios.post('/user/signup', { username, firstName, lastName, password }, { withCredentials: true });
             console.log('signup response: ', response)
             if (response.data.user) setCurrentUser(response.data.user);
-            return response.data;
+            return {
+                data: response.data,
+                status: response.status
+            };
         } catch (error) {
             console.error('Signin failed: ', error)
             throw error;
@@ -37,7 +40,10 @@ export const AuthProvider = ({ children }) => {
             const response = await axios.post("/user/signin", { username, password }, { withCredentials: true });
             console.log('login response: ', response)
             if (response.data.user) setCurrentUser(response.data.user);
-            return response.data;
+            return {
+                data: response.data,
+                status: response.status
+            };
         } catch (error) {
             console.error("Logout failed:", error);
         }
@@ -47,7 +53,10 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await axios.post('/user/logout', {}, { withCredentials: true });
             setCurrentUser(null);
-            return response.data;
+            return {
+                data: response.data,
+                status: response.status
+            };
         } catch (error) {
             console.error("Logout failed:", error);
         }

@@ -13,21 +13,24 @@ const Signup = () => {
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { signup, currentUser } = useAuth();
+  const [alert, setAlert] = useState(null);
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
     try {
       const response = await signup(username, firstName, lastName, password);
-      if (response.user) {
-        console.log('response in signup.jsx : ', response)
-        console.log('currentUser before navigate : ', currentUser)
+      console.log('res ', response)
+      if (response.data.user) {
+        setAlert(response.data.message);
         navigate('/dashboard');
       } else {
+        setAlert(response.message);
         console.error('Signup res failed: ', response)
       }
     } catch (error) {
       console.error('Signup failed: ', error)
+      setAlert(error.data.message);
     }
   };
 
@@ -41,13 +44,18 @@ const Signup = () => {
           <InputBox onChange={(e) => { setLastName(e.target.value); }} placeholder={"sharma"} label={"Last Name"} />
           <InputBox onChange={e => { setUsername(e.target.value); }} placeholder={"om@gmail.com"} label={"Email"} />
           <InputBox onChange={(e) => { setPassword(e.target.value) }} placeholder={"123456"} label={"Password"} />
+
+          {alert != null ? < div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <span className="font-medium">Danger alert!</span> Change a few things up and try submitting again.
+          </div> : ''}
+
           <div className="pt-4">
             <Button label="Sign up" onClick={handleSubmit} />
           </div>
           <BottomWarning label="Already have an account?" buttonText="Sign in" to="/signin" />
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

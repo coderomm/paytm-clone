@@ -14,10 +14,10 @@ const Signin = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         try {
             const response = await login(username, password);
+            console.log('log res ', response)
             if (response.user) {
                 navigate('/dashboard');
             } else {

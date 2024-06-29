@@ -15,6 +15,7 @@ const SendMoney = () => {
 
     const handleTransfer = async () => {
         const token = Cookies.get('token');
+        console.log('token- ', token)
         try {
             await axios.post(
                 '/account/transfer',

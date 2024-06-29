@@ -49,6 +49,11 @@ router.post("/signup", async (req, res) => {
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
+        const userToSend = await User.findById(user._id).select('-password');
+        if (!userToSend) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -58,7 +63,7 @@ router.post("/signup", async (req, res) => {
         res.status(201).json({
             message: "User created successfully",
             token: token,
-            user: user.select('-password')
+            user: userToSend
         });
     } catch (error) {
         res.status(500).json({
@@ -96,6 +101,11 @@ router.post("/signin", async (req, res) => {
             expiresIn: '1h'
         });
 
+        const userToSend = await User.findById(user._id).select('-password');
+        if (!userToSend) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -106,7 +116,7 @@ router.post("/signin", async (req, res) => {
         res.status(200).json({
             message: "Signin successful",
             token: token,
-            user: user.select('-password')
+            user: userToSend
         })
     } catch (error) {
         return res.status(500).json({
