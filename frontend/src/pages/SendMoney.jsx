@@ -2,6 +2,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from "../components/AxiosInstance";
 import { useState } from 'react';
 import { useNotification } from '../notify/context/NotificationContext';
+import SkeletonLoader from '../components/SkeletonLoader';
 
 const SendMoney = () => {
     const [searchParams] = useSearchParams();
@@ -11,6 +12,7 @@ const SendMoney = () => {
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const addNotification = useNotification();
+    const [loading, setLoading] = useState(false);
 
     const validate = () => {
         const errors = {};
@@ -28,6 +30,7 @@ const SendMoney = () => {
             setErrors(validationErrors);
             return;
         }
+        setLoading(true);
         try {
             const response = await axios.post('/account/transfer', { to: id, amount: parseFloat(amount) }, { withCredentials: true });
             addNotification('success', response.data.message || 'Money sent successfully');
@@ -36,6 +39,8 @@ const SendMoney = () => {
             const errorMessage = error.response?.data?.message || 'An error occurred';
             setErrors({ ...errors, server: errorMessage });
             addNotification('danger', errorMessage);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -66,14 +71,18 @@ const SendMoney = () => {
                                 >
                                     Amount (in Rs)
                                 </label>
-                                <input
-                                    onChange={handleAmountChange}
-                                    value={amount}
-                                    type="number"
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                    id="amount"
-                                    placeholder="Enter amount"
-                                />
+                                {loading ? (
+                                    <SkeletonLoader height={40} />
+                                ) : (
+                                    <input
+                                        onChange={handleAmountChange}
+                                        value={amount}
+                                        type="number"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        id="amount"
+                                        placeholder="Enter amount"
+                                    />
+                                )}
                             </div>
                             {errors.amount && <div style={{ color: 'red', textAlign: 'left' }}>{errors.amount}</div>}
                             {errors.server && <div style={{ color: 'red', textAlign: 'left' }}>{errors.server}</div>}
@@ -81,7 +90,7 @@ const SendMoney = () => {
                                 onClick={handleTransfer}
                                 className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white"
                             >
-                                Initiate Transfer
+                                {loading ? 'Processing...' : 'Initiate Transfer'}
                             </button>
                         </div>
                     </div>

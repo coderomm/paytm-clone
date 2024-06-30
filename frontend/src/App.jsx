@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./components/AuthProvider";
 import { NotificationProvider } from './notify/context/NotificationContext';
+import SkeletonLoader from './components/SkeletonLoader';
 import './notify/Notification.css';
 
 const Signin = lazy(() => import('./pages/Signin'));
@@ -19,7 +20,7 @@ const App = () => {
     <BrowserRouter>
       <AuthProvider>
         <NotificationProvider>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<SkeletonLoader count={1} height={40} width="100%" />}>
             <Routes>
               <Route exact path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/signin" element={<RedirectIfAuthenticated><Signin /></RedirectIfAuthenticated>} />

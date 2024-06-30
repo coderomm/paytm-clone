@@ -2,19 +2,22 @@ import { useEffect, useState } from "react"
 import { Button } from "./Button"
 import axios from "../components/AxiosInstance";
 import { useNavigate } from "react-router-dom";
-
+import SkeletonLoader from '../components/SkeletonLoader';
 
 export const Users = () => {
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState("");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('/user/bulk?filter=' + filter, {withCredentials:true});
+                const response = await axios.get('/user/bulk?filter=' + filter, { withCredentials: true });
                 setUsers(response.data.user);
             } catch (error) {
                 console.error('Error fetching users:', error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchUsers();
@@ -29,9 +32,11 @@ export const Users = () => {
                 setFilter(e.target.value)
             }} type="text" placeholder="Search users..." className="w-full px-2 py-1 border rounded border-slate-200"></input>
         </div>
-        <div>
+        {loading ? (
+            <SkeletonLoader count={5} height={20} width="100%" />
+        ) : (<div>
             {users.map((user, index) => <User key={index} user={user} />)}
-        </div>
+        </div>)}
     </>
 }
 

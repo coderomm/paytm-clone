@@ -1,5 +1,4 @@
-// src/pages/Signin.jsx
-import { useState } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BottomWarning } from '../components/BottomWarning';
 import { Button } from '../components/Button';
@@ -8,6 +7,7 @@ import { InputBox } from '../components/InputBox';
 import { SubHeading } from '../components/SubHeading';
 import { useAuth } from '../components/AuthProvider';
 import { useNotification } from '../notify/context/NotificationContext';
+import SkeletonLoader from '../components/SkeletonLoader';
 
 const Signin = () => {
     const [username, setUsername] = useState('');
@@ -16,6 +16,7 @@ const Signin = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
     const addNotification = useNotification();
+    const [loading, setLoading] = useState(false);
 
     const validate = () => {
         const errors = {};
@@ -38,6 +39,7 @@ const Signin = () => {
             setErrors(validationErrors);
             return;
         }
+        setLoading(true);
         try {
             const response = await login(username, password);
             if (response.data.user) {
@@ -47,6 +49,8 @@ const Signin = () => {
         } catch (error) {
             console.log('login error ', error)
             addNotification('danger', error.response?.data?.message || 'Signin failed. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -66,12 +70,18 @@ const Signin = () => {
                 <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
                     <Heading label="Sign in" />
                     <SubHeading label="Enter your credentials to access your account" />
-                    <InputBox onChange={handleUsernameChange} placeholder="om@gmail.com" label={"Email"} />
-                    {errors.username && <div style={{ color: 'red', textAlign: 'left' }}>{errors.username}</div>}
-                    <InputBox onChange={handlePasswordChange} placeholder="123456" label={"Password"} />
-                    {errors.password && <div style={{ color: 'red', textAlign: 'left' }}>{errors.password}</div>}
+                    {loading ? (
+                        <SkeletonLoader count={1} height={40} width="100%" />
+                    ) : (
+                        <>
+                            <InputBox onChange={handleUsernameChange} placeholder="om@gmail.com" label={"Email"} />
+                            {errors.username && <div style={{ color: 'red', textAlign: 'left' }}>{errors.username}</div>}
+                            <InputBox onChange={handlePasswordChange} placeholder="123456" label={"Password"} />
+                            {errors.password && <div style={{ color: 'red', textAlign: 'left' }}>{errors.password}</div>}
+                        </>
+                    )}
                     <div className="pt-4">
-                        <Button label="Sign in" onClick={handleSubmit} />
+                        <Button label={loading ? "Signing in..." : "Sign in"} onClick={handleSubmit} disabled={loading} />
                     </div>
                     <BottomWarning label="Don't have an account?" buttonText="Sign up" to="/signup" />
                 </div>
