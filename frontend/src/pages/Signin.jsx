@@ -12,23 +12,52 @@ import { useNotification } from '../notify/context/NotificationContext';
 const Signin = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [errors, setErrors] = useState({});
     const { login } = useAuth();
     const navigate = useNavigate();
     const addNotification = useNotification();
 
+    const validate = () => {
+        const errors = {};
+        if (!username) {
+            errors.username = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(username)) {
+            errors.username = 'Email address is invalid';
+        }
+        if (!password) {
+            errors.password = 'Password is required';
+        } else if (password.length < 6) {
+            errors.password = 'Password must be at least 6 characters';
+        }
+        return errors;
+    };
+
     const handleSubmit = async () => {
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
         try {
             const response = await login(username, password);
-            console.log('log res ', response)
             if (response.data.user) {
                 addNotification('success', response.data.message);
                 navigate('/dashboard');
-            } else {
-                addNotification('warning', response.data.message);
             }
         } catch (error) {
-            console.error('Failed:', error);
+            console.log('login error ', error)
+            addNotification('danger', error.response?.data?.message || 'Signin failed. Please try again.');
         }
+    };
+
+    const handleUsernameChange = (e) => {
+        setUsername(e.target.value);
+        setErrors((prevErrors) => ({ ...prevErrors, username: '' }));
+    };
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+        setErrors((prevErrors) => ({ ...prevErrors, password: '' }));
     };
 
     return (
@@ -37,8 +66,10 @@ const Signin = () => {
                 <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
                     <Heading label="Sign in" />
                     <SubHeading label="Enter your credentials to access your account" />
-                    <InputBox onChange={e => { setUsername(e.target.value); }} placeholder="om@gmail.com" label={"Email"} />
-                    <InputBox onChange={(e) => { setPassword(e.target.value) }} placeholder="123456" label={"Password"} />
+                    <InputBox onChange={handleUsernameChange} placeholder="om@gmail.com" label={"Email"} />
+                    {errors.username && <div style={{ color: 'red', textAlign: 'left' }}>{errors.username}</div>}
+                    <InputBox onChange={handlePasswordChange} placeholder="123456" label={"Password"} />
+                    {errors.password && <div style={{ color: 'red', textAlign: 'left' }}>{errors.password}</div>}
                     <div className="pt-4">
                         <Button label="Sign in" onClick={handleSubmit} />
                     </div>

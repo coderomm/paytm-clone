@@ -7,31 +7,76 @@ import { Button } from '../components/Button';
 import { Heading } from '../components/Heading';
 import { InputBox } from '../components/InputBox';
 import { SubHeading } from '../components/SubHeading';
+import { useNotification } from '../notify/context/NotificationContext';
 
 const Signup = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [alert, setAlert] = useState(null);
+  const [errors, setErrors] = useState({});
   const { signup } = useAuth();
   const navigate = useNavigate();
+  const addNotification = useNotification();
+
+  const validate = () => {
+    const errors = {};
+    if (!username) {
+      errors.username = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(username)) {
+      errors.username = 'Email address is invalid';
+    }
+    if (!password) {
+      errors.password = 'Password is required';
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
+    if (!firstName) {
+      errors.firstName = 'First name is required';
+    }
+    if (!lastName) {
+      errors.lastName = 'Last name is required';
+    }
+    return errors;
+  };
 
   const handleSubmit = async () => {
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     try {
       const response = await signup(username, firstName, lastName, password);
-      console.log('res ', response)
       if (response.data.user) {
-        setAlert(response.data.message);
+        addNotification('success', response.data.message);
         navigate('/dashboard');
-      } else {
-        setAlert(response.message);
-        console.error('Signup res failed: ', response)
       }
     } catch (error) {
-      console.error('Signup failed: ', error)
-      setAlert(error.data.message);
+      console.log('Signup error ', error)
+      addNotification('danger', error.response?.data?.message || 'Signup failed. Please try again.');
     }
+  };
+
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+    setErrors((prevErrors) => ({ ...prevErrors, username: '' }));
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    setErrors((prevErrors) => ({ ...prevErrors, password: '' }));
+  };
+
+  const handleFirstNameChange = (e) => {
+    setFirstName(e.target.value);
+    setErrors((prevErrors) => ({ ...prevErrors, firstName: '' }));
+  };
+
+  const handleLastNameChange = (e) => {
+    setLastName(e.target.value);
+    setErrors((prevErrors) => ({ ...prevErrors, lastName: '' }));
   };
 
   return (
@@ -40,15 +85,14 @@ const Signup = () => {
         <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
           <Heading label="Sign up" />
           <SubHeading label="Create an account to get started" />
-          <InputBox onChange={e => { setFirstName(e.target.value); }} placeholder={"om"} label={"First Name"} />
-          <InputBox onChange={(e) => { setLastName(e.target.value); }} placeholder={"sharma"} label={"Last Name"} />
-          <InputBox onChange={e => { setUsername(e.target.value); }} placeholder={"om@gmail.com"} label={"Email"} />
-          <InputBox onChange={(e) => { setPassword(e.target.value) }} placeholder={"123456"} label={"Password"} />
-
-          {alert != null ? < div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-            <span className="font-medium">Danger alert!</span> Change a few things up and try submitting again.
-          </div> : ''}
-
+          <InputBox onChange={handleFirstNameChange} placeholder={"om"} label={"First Name"} />
+          {errors.firstName && <div style={{ color: 'red', textAlign: 'left' }}>{errors.firstName}</div>}
+          <InputBox onChange={handleLastNameChange} placeholder={"sharma"} label={"Last Name"} />
+          {errors.lastName && <div style={{ color: 'red', textAlign: 'left' }}>{errors.lastName}</div>}
+          <InputBox onChange={handleUsernameChange} placeholder={"om@gmail.com"} label={"Email"} />
+          {errors.username && <div style={{ color: 'red', textAlign: 'left' }}>{errors.username}</div>}
+          <InputBox onChange={handlePasswordChange} placeholder={"123456"} label={"Password"} />
+          {errors.password && <div style={{ color: 'red', textAlign: 'left' }}>{errors.password}</div>}
           <div className="pt-4">
             <Button label="Sign up" onClick={handleSubmit} />
           </div>

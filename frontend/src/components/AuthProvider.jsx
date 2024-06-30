@@ -24,28 +24,39 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await axios.post('/user/signup', { username, firstName, lastName, password }, { withCredentials: true });
             console.log('signup response: ', response)
-            if (response.data.user) setCurrentUser(response.data.user);
-            return {
-                data: response.data,
-                status: response.status
-            };
+            if (response.data.user) {
+                setCurrentUser(response.data.user);
+            }
+            return response;
         } catch (error) {
-            console.error('Signin failed: ', error)
+            if (error.response) {
+                console.error('Signup failed: ', error.response.data);
+            } else if (error.request) {
+                console.error('Signup failed: No response received', error.request);
+            } else {
+                console.error('Signup failed: ', error.message);
+            }
             throw error;
         }
-    }
+    };
 
     const login = async (username, password) => {
         try {
             const response = await axios.post("/user/signin", { username, password }, { withCredentials: true });
             console.log('login response: ', response)
-            if (response.data.user) setCurrentUser(response.data.user);
-            return {
-                data: response.data,
-                status: response.status
-            };
+            if (response.data.user) {
+                setCurrentUser(response.data.user);
+            }
+            return response;
         } catch (error) {
-            console.error("Logout failed:", error);
+            if (error.response) {
+                console.error('Login failed: ', error.response.data);
+            } else if (error.request) {
+                console.error('Login failed: No response received', error.request);
+            } else {
+                console.error('Login failed: ', error.message);
+            }
+            throw error;
         }
     };
 
@@ -53,12 +64,10 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await axios.post('/user/logout', {}, { withCredentials: true });
             setCurrentUser(null);
-            return {
-                data: response.data,
-                status: response.status
-            };
+            return response.data;
         } catch (error) {
             console.error("Logout failed:", error);
+            throw error;
         }
     };
 

@@ -10,7 +10,7 @@ const NotificationWrapper = styled.div`
     justify-content: space-between;
     align-items: center;
     transition: opacity 0.5s ease-in-out;
-    min-width: 340px;
+    max-width: 500px;
     font-size: 1.3rem;
     font-weight: 600;
     ${({ type }) => type === 'info' && css`

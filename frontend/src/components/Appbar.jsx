@@ -1,17 +1,23 @@
 import { useAuth } from "./AuthProvider";
+import { useNotification } from '../notify/context/NotificationContext';
 
 export const Appbar = () => {
-    const { currentUser, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
+  const addNotification = useNotification();
 
-    if (currentUser === undefined) {
-        return <div>Loading...</div>;
+  if (currentUser === undefined) {
+    return <div>Loading...</div>;
+  }
+
+  const handleLogout = async () => {
+    try {
+      const response = await logout();
+      addNotification('success', response.message || 'Logged out successfully');
+    } catch (error) {
+      console.error('Failed to logout:', error);
+      addNotification('danger', error.response?.data?.message || 'Logout failed. Please try again.');
     }
-
-    const handleLogout = () => {
-        logout().catch(error => {
-            console.error('Failed to logout:', error);
-        });
-    };
+  };
 
     return (
         <div className="shadow h-14 flex justify-between">
