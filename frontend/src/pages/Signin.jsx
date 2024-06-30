@@ -7,24 +7,27 @@ import { Heading } from '../components/Heading';
 import { InputBox } from '../components/InputBox';
 import { SubHeading } from '../components/SubHeading';
 import { useAuth } from '../components/AuthProvider';
+import { useNotification } from '../notify/context/NotificationContext';
 
 const Signin = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
+    const addNotification = useNotification();
 
     const handleSubmit = async () => {
         try {
             const response = await login(username, password);
             console.log('log res ', response)
-            if (response.user) {
+            if (response.data.user) {
+                addNotification('success', response.data.message);
                 navigate('/dashboard');
             } else {
-                console.error('Signin failed:', response);
+                addNotification('warning', response.data.message);
             }
         } catch (error) {
-            console.error('Signin failed:', error);
+            console.error('Failed:', error);
         }
     };
 
