@@ -44,7 +44,7 @@ router.post("/signup", async (req, res) => {
         await user.save();
         await Account.create({
             userId: user._id,
-            balance: 1 + Math.random() * 10000
+            balance: 1 + Math.round(Math.random() * 10000)
         });
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
@@ -179,20 +179,21 @@ router.get("/me", authMiddleware, async (req, res) => {
     }
 });
 
-router.get("/bulk", async (req, res) => {
+router.get("/bulk", authMiddleware, async (req, res) => {
     const filter = req.query.filter || "";
+    const loggedInUserId = req.userId;
 
     const users = await User.find({
-        $or: [{
-            firstName: {
-                "$regex": filter
-            }
-        }, {
-            lastName: {
-                "$regex": filter
-            }
-        }]
-    })
+        $and: [
+            {
+                $or: [
+                    { firstName: { "$regex": filter, "$options": "i" } },  // Add "i" option for case-insensitive search
+                    { lastName: { "$regex": filter, "$options": "i" } }
+                ]
+            },
+            { _id: { $ne: loggedInUserId } }  // Exclude the current logged-in user
+        ]
+    });
 
     res.json({
         user: users.map(user => ({

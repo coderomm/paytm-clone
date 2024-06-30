@@ -5,7 +5,8 @@ const authMiddleware = (req, res, next) => {
 
     if (!token) {
         return res.status(401).json({
-            message: "Authorization token missing"
+            message: "Authorization token missing",
+            token:token
         });
     }
 

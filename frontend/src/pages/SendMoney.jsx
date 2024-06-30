@@ -17,18 +17,7 @@ const SendMoney = () => {
         const token = Cookies.get('token');
         console.log('token- ', token)
         try {
-            await axios.post(
-                '/account/transfer',
-                {
-                    to: id,
-                    amount
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
+            await axios.post('/account/transfer', { to: id, amount: parseFloat(amount) }, { withCredentials: true });
             setSuccess('Transfer successful');
             setError(null);
             navigate('/dashboard');
