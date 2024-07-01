@@ -4,8 +4,8 @@ const cookieParser = require('cookie-parser');
 const helmet = require("helmet");
 const app = express();
 const PORT = process.env.PORT || 3000;
-const dbConnect = require("./db/dbConnect");
-const mainRouter = require("./routes/index");
+const dbConnect = require("../db/dbConnect");
+const mainRouter = require("../routes/index");
 
 const allowedOrigins = [
   'https://temp-money.vercel.app',
