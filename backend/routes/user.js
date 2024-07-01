@@ -57,12 +57,11 @@ router.post("/signup", async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Lax',
+            sameSite: 'None',
             maxAge: 3600000
         });
         res.status(201).json({
             message: "User created successfully",
-            token: token,
             user: userToSend
         });
     } catch (error) {
@@ -109,13 +108,12 @@ router.post("/signin", async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Lax',
+            sameSite: 'None',
             maxAge: 3600000
         });
 
         res.status(200).json({
             message: "Signin successful",
-            token: token,
             user: userToSend
         })
     } catch (error) {
@@ -210,7 +208,7 @@ router.post("/logout", authMiddleware, (req, res) => {
         res.cookie('token', '', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Lax',
+            sameSite: 'None',
             maxAge: 0
         });
         res.status(200).json({ message: "Logged out successfully" });
