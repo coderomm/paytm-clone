@@ -16,6 +16,7 @@ const RedirectIfAuthenticated = lazy(() => import('./components/RedirectIfAuthen
 
 
 const App = () => {
+  console.log('API URL:', import.meta.env.VITE_APP_API_URL);
   return (
     <BrowserRouter>
       <AuthProvider>

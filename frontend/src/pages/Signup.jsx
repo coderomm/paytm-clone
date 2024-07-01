@@ -8,7 +8,7 @@ import { Heading } from '../components/Heading';
 import { InputBox } from '../components/InputBox';
 import { SubHeading } from '../components/SubHeading';
 import { useNotification } from '../notify/context/NotificationContext';
-import SkeletonLoader from './components/SkeletonLoader';
+import SkeletonLoader from '../components/SkeletonLoader';
 
 const Signup = () => {
   const [firstName, setFirstName] = useState('');

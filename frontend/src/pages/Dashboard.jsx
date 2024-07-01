@@ -11,7 +11,6 @@ const Dashboard = () => {
         const fetchBalance = async () => {
             try {
                 const response = await axios.get('/account/balance', { withCredentials: true });
-                console.log('balance res: ', response)
                 if (response.data.balance) setBalance(response.data.balance);
             } catch (error) {
                 console.log('Error while fetching balance', error)

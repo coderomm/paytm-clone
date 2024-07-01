@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
     const signup = async (username, firstName, lastName, password) => {
         try {
             const response = await axios.post('/user/signup', { username, firstName, lastName, password }, { withCredentials: true });
-            console.log('signup response: ', response)
             if (response.data.user) {
                 setCurrentUser(response.data.user);
             }
@@ -43,7 +42,6 @@ export const AuthProvider = ({ children }) => {
     const login = async (username, password) => {
         try {
             const response = await axios.post("/user/signin", { username, password }, { withCredentials: true });
-            console.log('login response: ', response)
             if (response.data.user) {
                 setCurrentUser(response.data.user);
             }
