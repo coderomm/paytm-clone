@@ -67,24 +67,27 @@ const Signin = () => {
     return (
         <div className="bg-slate-300 h-screen flex justify-center">
             <div className="flex flex-col justify-center">
-                <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
+                {loading ? (
+                    <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
+                        <SkeletonLoader height={30} width="80%" className="mx-auto" />
+                        <SkeletonLoader height={20} width="60%" className="mx-auto mt-2" />
+                        <SkeletonLoader height={40} width="90%" className="mt-4" />
+                        <SkeletonLoader height={40} width="90%" className="mt-4" />
+                        <SkeletonLoader height={40} width="90%" className="mt-4" />
+                    </div>
+                ) : (<div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
                     <Heading label="Sign in" />
                     <SubHeading label="Enter your credentials to access your account" />
-                    {loading ? (
-                        <SkeletonLoader count={1} height={40} width="100%" />
-                    ) : (
-                        <>
-                            <InputBox onChange={handleUsernameChange} placeholder="om@gmail.com" label={"Email"} />
-                            {errors.username && <div style={{ color: 'red', textAlign: 'left' }}>{errors.username}</div>}
-                            <InputBox onChange={handlePasswordChange} placeholder="123456" label={"Password"} />
-                            {errors.password && <div style={{ color: 'red', textAlign: 'left' }}>{errors.password}</div>}
-                        </>
-                    )}
+                    <InputBox onChange={handleUsernameChange} placeholder="om@gmail.com" label={"Email"} />
+                    {errors.username && <div style={{ color: 'red', textAlign: 'left' }}>{errors.username}</div>}
+                    <InputBox onChange={handlePasswordChange} placeholder="123456" label={"Password"} />
+                    {errors.password && <div style={{ color: 'red', textAlign: 'left' }}>{errors.password}</div>}
                     <div className="pt-4">
                         <Button label={loading ? "Signing in..." : "Sign in"} onClick={handleSubmit} disabled={loading} />
                     </div>
                     <BottomWarning label="Don't have an account?" buttonText="Sign up" to="/signup" />
                 </div>
+                )}
             </div>
         </div>
     );

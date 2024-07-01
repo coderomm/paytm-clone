@@ -86,28 +86,34 @@ const Signup = () => {
   return (
     <div className="bg-slate-300 h-screen flex justify-center">
       <div className="flex flex-col justify-center">
-        <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
+        {loading ? (
+          <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
+            <SkeletonLoader height={30} width="80%" className="mx-auto" />
+            <SkeletonLoader height={20} width="60%" className="mx-auto mt-2" />
+            <SkeletonLoader height={40} width="90%" className="mt-4" />
+            <SkeletonLoader height={40} width="90%" className="mt-4" />
+            <SkeletonLoader height={40} width="90%" className="mt-4" />
+            <SkeletonLoader height={40} width="90%" className="mt-4" />
+            <SkeletonLoader height={40} width="50%" className="mt-4" />
+            <SkeletonLoader height={40} width="60%" className="mt-4" />
+          </div>
+        ) : (<div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
           <Heading label="Sign up" />
           <SubHeading label="Create an account to get started" />
-          {loading ? (
-            <SkeletonLoader count={5} height={20} width="100%" />
-          ) : (
-            <>
-              <InputBox onChange={handleFirstNameChange} placeholder={"om"} label={"First Name"} />
-              {errors.firstName && <div style={{ color: 'red', textAlign: 'left' }}>{errors.firstName}</div>}
-              <InputBox onChange={handleLastNameChange} placeholder={"sharma"} label={"Last Name"} />
-              {errors.lastName && <div style={{ color: 'red', textAlign: 'left' }}>{errors.lastName}</div>}
-              <InputBox onChange={handleUsernameChange} placeholder={"om@gmail.com"} label={"Email"} />
-              {errors.username && <div style={{ color: 'red', textAlign: 'left' }}>{errors.username}</div>}
-              <InputBox onChange={handlePasswordChange} placeholder={"123456"} label={"Password"} />
-              {errors.password && <div style={{ color: 'red', textAlign: 'left' }}>{errors.password}</div>}
-            </>
-          )}
+          <InputBox onChange={handleFirstNameChange} placeholder={"om"} label={"First Name"} />
+          {errors.firstName && <div style={{ color: 'red', textAlign: 'left' }}>{errors.firstName}</div>}
+          <InputBox onChange={handleLastNameChange} placeholder={"sharma"} label={"Last Name"} />
+          {errors.lastName && <div style={{ color: 'red', textAlign: 'left' }}>{errors.lastName}</div>}
+          <InputBox onChange={handleUsernameChange} placeholder={"om@gmail.com"} label={"Email"} />
+          {errors.username && <div style={{ color: 'red', textAlign: 'left' }}>{errors.username}</div>}
+          <InputBox onChange={handlePasswordChange} placeholder={"123456"} label={"Password"} />
+          {errors.password && <div style={{ color: 'red', textAlign: 'left' }}>{errors.password}</div>}
           <div className="pt-4">
-            <Button label="Sign up" onClick={handleSubmit} />
+            <Button label={loading ? "Signing up..." : "Sign up"} onClick={handleSubmit} />
           </div>
           <BottomWarning label="Already have an account?" buttonText="Sign in" to="/signin" />
         </div>
+        )}
       </div>
     </div >
   );
