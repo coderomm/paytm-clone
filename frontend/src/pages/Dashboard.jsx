@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Appbar } from "../components/Appbar"
+import { Header } from "../components/Header"
 import { Balance } from "../components/Balance"
 import { Users } from "../components/Users"
 import axios from '../components/AxiosInstance'
+import { Footer } from "../components/Footer";
 
 const Dashboard = () => {
     const [balance, setBalance] = useState(0);
@@ -20,11 +21,12 @@ const Dashboard = () => {
     }, [])
     return (
         <div>
-            <Appbar />
+            <Header />
             <div className="m-8">
                 <Balance value={balance} />
                 <Users />
             </div>
+            <Footer />
         </div>
     );
 };

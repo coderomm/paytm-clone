@@ -3,6 +3,7 @@ import { Button } from "./Button"
 import axios from "../components/AxiosInstance";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from '../components/SkeletonLoader';
+import { InputBox } from "./InputBox";
 
 export const Users = () => {
     const [users, setUsers] = useState([]);
@@ -13,6 +14,7 @@ export const Users = () => {
         const fetchUsers = async () => {
             try {
                 const response = await axios.get('/user/bulk?filter=' + filter, { withCredentials: true });
+                console.log('response ', response)
                 setUsers(response.data.user);
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -28,15 +30,9 @@ export const Users = () => {
             Users
         </div>
         <div className="my-2">
-            <input onChange={(e) => {
-                setFilter(e.target.value)
-            }} type="text" placeholder="Search users..." className="w-full px-2 py-1 border rounded border-slate-200"></input>
+            <InputBox onChange={(e) => { setFilter(e.target.value) }} type="text" placeholder="Search users..."></InputBox>
         </div>
-        {loading ? (
-            <SkeletonLoader count={5} height={20} width="100%" />
-        ) : (<div>
-            {users.map((user, index) => <User key={index} user={user} />)}
-        </div>)}
+        {users.map((user, index) => <User key={index} user={user} />)}
     </>
 }
 
@@ -59,7 +55,7 @@ function User({ user }) {
 
         <div className="flex flex-col justify-center h-ful">
             <Button onClick={(e) => {
-                navigate("/send?id=" + user._id + "&name=" + user.firstName);
+                navigate("/send?id=" + user._id + "&first_name=" + user.firstName + "&last_name=" + user.lastName);
             }} label={"Send Money"} />
         </div>
     </div>

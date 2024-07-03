@@ -2,12 +2,17 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from "../components/AxiosInstance";
 import { useState } from 'react';
 import { useNotification } from '../notify/context/NotificationContext';
-import SkeletonLoader from '../components/SkeletonLoader';
+import { Header } from '../components/Header';
+import { Button } from '../components/Button';
+import { InputBox } from '../components/InputBox';
+import SendMoneySkeleton from '../skeletons/SendMoneySkeleton';
+import { Footer } from '../components/Footer';
 
 const SendMoney = () => {
     const [searchParams] = useSearchParams();
     const id = searchParams.get('id');
-    const name = searchParams.get('name');
+    const first_name = searchParams.get('first_name');
+    const last_name = searchParams.get('last_name');
     const [amount, setAmount] = useState('');
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
@@ -49,54 +54,57 @@ const SendMoney = () => {
         setErrors((prevErrors) => ({ ...prevErrors, amount: '' }));
     };
 
+    const handleGoBack = () => {
+        navigate('/dashboard');
+    }
+
+    if (loading) {
+        return <>
+            <Header />
+            <SendMoneySkeleton />
+            <Footer />
+        </>;
+    }
+
     return (
-        <div className="flex justify-center h-screen bg-gray-100">
-            <div className="h-full flex flex-col justify-center">
-                <div className="border w-full h-min text-card-foreground max-w-md p-4 space-y-8 min-w-[350px] bg-white shadow-lg rounded-lg">
-                    <div className="flex flex-col space-y-1.5 p-6">
-                        <h2 className="text-3xl font-bold text-center">Send Money</h2>
-                    </div>
-                    <div className="p-6">
-                        <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-                                <span className="text-2xl text-white">{name[0].toUpperCase()}</span>
+        <>
+            <Header />
+            <div className="bg-[#163300] border-t border-[#fefefe] h-screen flex justify-center items-start pt-20">
+                <div className="w-10/12 md:w-6/12">
+                    <div className="flex flex-col justify-center rounded-[32px] bg-white text-center p-8 h-max">
+                        <h3 className="text-2xl">Send Temp Money Securly</h3>
+                        <div className="border-t border-[#0e0f0c1f] my-5"></div>
+                        <div className="">
+                            <p className='mb-3'>You are sending to,</p>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-[#9fe870] flex items-center justify-center">
+                                    <span className="text-2xl text-[#163300]">{first_name[0].toUpperCase()}</span>
+                                </div>
+                                <h3 className="text-2xl font-semibold">{first_name} {last_name}</h3>
                             </div>
-                            <h3 className="text-2xl font-semibold">{name}</h3>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <label
-                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                    htmlFor="amount"
-                                >
-                                    Amount (in Rs)
-                                </label>
-                                {loading ? (
-                                    <SkeletonLoader height={40} />
-                                ) : (
-                                    <input
+                            <div className="mt-4">
+                                <div className="">
+                                    <InputBox
+                                        label={"You send exactly"}
                                         onChange={handleAmountChange}
                                         value={amount}
-                                        type="number"
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                        id="amount"
-                                        placeholder="Enter amount"
+                                        type={"number"}
+                                        placeholder="1,000"
+                                        error={errors.amount}
                                     />
-                                )}
+                                </div>
+                                {errors.server && <div style={{ color: 'red', textAlign: 'left' }}>{errors.server}</div>}
+                                <div className="mt-4 flex-col flex gap-3">
+                                    <Button onClick={handleTransfer} label={loading ? 'Processing...' : 'Initiate Transfer'}></Button>
+                                    <button onClick={handleGoBack} type="button" className="w-full text-[#163300] font-bold bg-[#ffffff1a] border border-[#9fe870] transition-colors duration-150 ease-in-out text-base rounded-full select-none py-2 px-4">Cancle, Go Back</button>
+                                </div>
                             </div>
-                            {errors.amount && <div style={{ color: 'red', textAlign: 'left' }}>{errors.amount}</div>}
-                            {errors.server && <div style={{ color: 'red', textAlign: 'left' }}>{errors.server}</div>}
-                            <button
-                                onClick={handleTransfer}
-                                className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white"
-                            >
-                                {loading ? 'Processing...' : 'Initiate Transfer'}
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <Footer />
+        </>
     );
 };
 

@@ -57,7 +57,7 @@ router.post("/signup", async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'None',
+            sameSite: 'Lax',
             maxAge: 3600000
         });
         res.status(201).json({
@@ -108,12 +108,13 @@ router.post("/signin", async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'None',
+            sameSite: 'Lax',
             maxAge: 3600000
         });
 
         res.status(200).json({
             message: "Signin successful",
+            token: token,
             user: userToSend
         })
     } catch (error) {
@@ -177,7 +178,7 @@ router.get("/me", authMiddleware, async (req, res) => {
     }
 });
 
-router.get("/bulk", authMiddleware, async (req, res) => {
+router.get("/bulk", authMiddleware,async (req, res) => {
     const filter = req.query.filter || "";
     const loggedInUserId = req.userId;
 
@@ -208,7 +209,7 @@ router.post("/logout", authMiddleware, (req, res) => {
         res.cookie('token', '', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'None',
+            sameSite: 'Lax',
             maxAge: 0
         });
         res.status(200).json({ message: "Logged out successfully" });

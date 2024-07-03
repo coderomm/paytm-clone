@@ -6,9 +6,12 @@ import { BottomWarning } from '../components/BottomWarning';
 import { Button } from '../components/Button';
 import { Heading } from '../components/Heading';
 import { InputBox } from '../components/InputBox';
-import { SubHeading } from '../components/SubHeading';
 import { useNotification } from '../notify/context/NotificationContext';
-import SkeletonLoader from '../components/SkeletonLoader';
+import { Header } from '../components/Header';
+import HeaderSkeleton from '../skeletons/HeaderSkeleton';
+import BalanceSkeleton from '../skeletons/BalanceSkeleton';
+import UsersSkeleton from '../skeletons/UsersSkeleton';
+import { Footer } from '../components/Footer';
 
 const Signup = () => {
   const [firstName, setFirstName] = useState('');
@@ -83,39 +86,39 @@ const Signup = () => {
     setErrors((prevErrors) => ({ ...prevErrors, lastName: '' }));
   };
 
-  return (
-    <div className="bg-slate-300 h-screen flex justify-center">
-      <div className="flex flex-col justify-center">
-        {loading ? (
-          <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
-            <SkeletonLoader height={30} width="80%" className="mx-auto" />
-            <SkeletonLoader height={20} width="60%" className="mx-auto mt-2" />
-            <SkeletonLoader height={40} width="90%" className="mt-4" />
-            <SkeletonLoader height={40} width="90%" className="mt-4" />
-            <SkeletonLoader height={40} width="90%" className="mt-4" />
-            <SkeletonLoader height={40} width="90%" className="mt-4" />
-            <SkeletonLoader height={40} width="50%" className="mt-4" />
-            <SkeletonLoader height={40} width="60%" className="mt-4" />
-          </div>
-        ) : (<div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
-          <Heading label="Sign up" />
-          <SubHeading label="Create an account to get started" />
-          <InputBox onChange={handleFirstNameChange} placeholder={"om"} label={"First Name"} />
-          {errors.firstName && <div style={{ color: 'red', textAlign: 'left' }}>{errors.firstName}</div>}
-          <InputBox onChange={handleLastNameChange} placeholder={"sharma"} label={"Last Name"} />
-          {errors.lastName && <div style={{ color: 'red', textAlign: 'left' }}>{errors.lastName}</div>}
-          <InputBox onChange={handleUsernameChange} placeholder={"om@gmail.com"} label={"Email"} />
-          {errors.username && <div style={{ color: 'red', textAlign: 'left' }}>{errors.username}</div>}
-          <InputBox onChange={handlePasswordChange} placeholder={"123456"} label={"Password"} />
-          {errors.password && <div style={{ color: 'red', textAlign: 'left' }}>{errors.password}</div>}
-          <div className="pt-4">
-            <Button label={loading ? "Signing up..." : "Sign up"} onClick={handleSubmit} />
-          </div>
-          <BottomWarning label="Already have an account?" buttonText="Sign in" to="/signin" />
+  if (loading) {
+    return <>
+      <div>
+        <HeaderSkeleton />
+        <div className="m-8">
+          <BalanceSkeleton />
+          <UsersSkeleton />
         </div>
-        )}
+        <Footer />
       </div>
-    </div >
+    </>;
+  }
+
+  return (
+    <>
+      <Header />
+      <div className="bg-white border-t border-[#0e0f0c1f] h-screen flex justify-center items-start pt-10 md:py-10">
+        <div className="flex flex-col justify-center w-full md:w-6/12">
+          <div className="rounded-lg bg-white w-full text-center p-2 px-12 h-max">
+            <Heading label="Create your Temp Money account" />
+            <BottomWarning label="Already have an account?" buttonText="Log in" to="/signin" />
+            <InputBox type={"text"} onChange={handleFirstNameChange} placeholder={"om"} label={"First Name"} error={errors.firstName} />
+            <InputBox type={"text"} onChange={handleLastNameChange} placeholder={"sharma"} label={"Last Name"} error={errors.lastName} />
+            <InputBox type={"email"} onChange={handleUsernameChange} placeholder={"om@gmail.com"} label={"Email/Username"} error={errors.username} />
+            <InputBox type={"password"} onChange={handlePasswordChange} placeholder={"123456"} label={"Password"} error={errors.password} />
+            <div className="mt-8">
+              <Button label={loading ? "Signing up..." : "Sign up"} onClick={handleSubmit} />
+            </div>
+          </div>
+        </div>
+      </div >
+      <Footer />
+    </>
   );
 };
 
