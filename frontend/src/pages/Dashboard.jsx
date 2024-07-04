@@ -22,7 +22,7 @@ const Dashboard = () => {
     return (
         <div>
             <Header />
-            <div className="m-8">
+            <div className="m-8 min-h-[86.3vh] md:min-h-[86.7vh] lg:min-h-[90.1vh] 2xl:min-h-[100vh]">
                 <Balance value={balance} />
                 <Users />
             </div>

@@ -69,7 +69,7 @@ const SendMoney = () => {
     return (
         <>
             <Header />
-            <div className="bg-[#163300] border-t border-[#fefefe] h-screen flex justify-center items-start pt-20">
+            <div className="bg-[#163300] border-t border-[#fefefe] min-h-[86.3vh] md:min-h-[86.7vh] lg:min-h-[90.1vh] 2xl:min-h-[100vh] flex justify-center items-start pt-20">
                 <div className="w-10/12 md:w-6/12">
                     <div className="flex flex-col justify-center rounded-[32px] bg-white text-center p-8 h-max">
                         <h3 className="text-2xl">Send Temp Money Securly</h3>

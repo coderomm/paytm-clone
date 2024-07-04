@@ -83,7 +83,7 @@ const Signin = () => {
     return (
         <>
             <Header />
-            <div className="bg-white border-t border-[#0e0f0c1f] h-screen flex justify-center items-start pt-10 sm:pt-20">
+            <div className="bg-white border-t border-[#0e0f0c1f] min-h-[86.3vh] md:min-h-[86.7vh] lg:min-h-[90.1vh] 2xl:min-h-[100vh] flex justify-center items-start pt-10 sm:pt-20">
                 <div className="flex flex-col justify-center w-full md:w-6/12">
                     <div className="rounded-lg bg-white w-full text-center p-2 px-12 h-max">
                         <Heading label="Welcome back." />

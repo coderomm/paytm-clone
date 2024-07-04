@@ -12,7 +12,7 @@ const Index = () => {
     return (
         <>
             <Header />
-            <main className="border-t border-[#9fe870] min-h-lvh w-full px-1 md:px-32 py-4 flex flex-col md:pt-20 lg:flex-row justify-start md:justify-start items-center md:items-start gap-1 sm:gap-5 bg-[#163300]">
+            <main className="border-t border-[#9fe870] min-h-[86.2vh] lg:min-h-[89.8vh] xl:min-h-[86.5vh] 2xl:min-h-[1vh] w-full px-1 md:px-32 py-4 flex flex-col md:pt-20 lg:flex-row justify-start md:justify-start items-center md:items-start gap-1 sm:gap-5 bg-[#163300]">
                 <div className="flex flex-col justify-center items-center pt-20 md:pt-0 md:flex-grow">
                     <h1 className="uppercase font-black text-center text-[#9fe870] text-5xl sm:text-[4rem]"><span>International temp money transfers</span></h1>
                     <img className="grayscale-0 w-40 sm:w-80" src={moneySVG} />
